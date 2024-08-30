@@ -59,7 +59,21 @@ func (ac *AccountController) Deposit(c echo.Context) error {
 	}
 
 	account.Saldo += req.Nominal
-	ac.DB.Save(account)
+	if err := ac.DB.Save(account).Error; err != nil {
+		utils.LogWarning("Failed to update account balance", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"remark": "Failed to update account balance"})
+	}
+
+	history := models.TransactionHistory{
+		NoRekening:     req.NoRekening,
+		TransactionType: "deposit",
+		Amount:        req.Nominal,
+		Balance:       account.Saldo,
+	}
+	if err := ac.DB.Create(&history).Error; err != nil {
+		utils.LogWarning("Failed to record transaction history", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"remark": "Failed to record transaction history"})
+	}
 
 	utils.LogInfo("Deposit successful", map[string]interface{}{"no_rekening": req.NoRekening, "saldo": account.Saldo})
 	return c.JSON(http.StatusOK, map[string]interface{}{"saldo": account.Saldo})
@@ -82,7 +96,21 @@ func (ac *AccountController) Withdraw(c echo.Context) error {
 	}
 
 	account.Saldo -= req.Nominal
-	ac.DB.Save(account)
+	if err := ac.DB.Save(account).Error; err != nil {
+		utils.LogWarning("Failed to update account balance", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"remark": "Failed to update account balance"})
+	}
+
+	history := models.TransactionHistory{
+		NoRekening:     req.NoRekening,
+		TransactionType: "withdrawal",
+		Amount:        req.Nominal,
+		Balance:       account.Saldo,
+	}
+	if err := ac.DB.Create(&history).Error; err != nil {
+		utils.LogWarning("Failed to record transaction history", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"remark": "Failed to record transaction history"})
+	}
 
 	utils.LogInfo("Withdrawal successful", map[string]interface{}{"no_rekening": req.NoRekening, "saldo": account.Saldo})
 	return c.JSON(http.StatusOK, map[string]interface{}{"saldo": account.Saldo})

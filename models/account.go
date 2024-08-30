@@ -19,3 +19,11 @@ type TransactionRequest struct {
 	NoRekening string `json:"no_rekening" validate:"required"`
 	Nominal    int64  `json:"nominal" validate:"required"`
 }
+
+type TransactionHistory struct {
+	ID             uint   `gorm:"primaryKey"`
+	NoRekening     string `json:"no_rekening"`
+	TransactionType string `json:"transaction_type"` // deposit or withdrawal
+	Amount          int64  `json:"amount"`
+	Balance         int64  `json:"balance"`
+}
