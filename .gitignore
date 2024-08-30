@@ -1,0 +1,36 @@
+# Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Dependency directories
+/vendor/
+
+# Environment files
+.env
+
+# Build output
+/bin/
+/build/
+
+# Docker
+docker-compose.override.yml
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
